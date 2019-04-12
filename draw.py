@@ -1,9 +1,24 @@
 from display import *
 from matrix import *
 from gmath import *
+import random
 
 def scanline_convert(polygons, i, screen, zbuffer ):
-    pass
+    for polygon in polygons:
+        points = [polygon[0], polygon[1], polygon[2]]
+
+        top = points[points.index(max(points, key=lambda x:int(x[1])))]
+        points.remove(top)
+        bottom = points[points.index(min(points, key=lambda x:int(x[1])))]
+        points.remove(bottom)
+        middle = points.pop()
+
+        color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
+
+
+
+
+scanline_convert([  [[2,3,3],[3,3,3],[-10,3,3]], [[2,3,3],[3,100,3],[-10,-10,3]], [[2,3,3],[3,-100,3],[-10,-10,3]]  ], 0, 0, 0)
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
     add_point(polygons, x0, y0, z0)
