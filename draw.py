@@ -22,7 +22,6 @@ def scanline_convert(polygons, i, screen, zbuffer ):
     z_final = middle[2]
     delta_x = (top[0]-x_init)/(top[1]-bottom[1]) if top[1]!=bottom[1] else 0
     delta_z = (top[2]-z_init)/(top[1]-bottom[1]) if top[1]!=bottom[1] else 0
-    draw_line(int(x_init), int(y), int(z_init), int(x_final), int(y), int(z_final), screen, zbuffer, color)
     delta_x_f = (middle[0]-x_init)/(middle[1]-bottom[1]) if middle[1]!=bottom[1] else 0
     delta_z_f = (middle[2]-z_init)/(middle[1]-bottom[1]) if middle[1]!=bottom[1] else 0
 
@@ -37,8 +36,6 @@ def scanline_convert(polygons, i, screen, zbuffer ):
     y = middle[1]
     x_final = middle[0]
     z_final = middle[2]
-
-    draw_line(int(x_init), int(y), int(z_init), int(x_final), int(y), int(z_final), screen, zbuffer, color)
 
     delta_x_f = (top[0]-x_final)/(top[1]-middle[1]) if middle[1]!=top[1] else 0
     delta_z_f = (top[2]-z_final)/(top[1]-middle[1]) if middle[1]!=top[1] else 0
