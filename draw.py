@@ -4,21 +4,57 @@ from gmath import *
 import random
 
 def scanline_convert(polygons, i, screen, zbuffer ):
-    for polygon in polygons:
-        points = [polygon[0], polygon[1], polygon[2]]
 
-        top = points[points.index(max(points, key=lambda x:int(x[1])))]
-        points.remove(top)
-        bottom = points[points.index(min(points, key=lambda x:int(x[1])))]
-        points.remove(bottom)
-        middle = points.pop()
+    points = [polygons[i], polygons[i+1], polygons[i+2]]
 
-        color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
+    top = points[points.index(max(points, key=lambda x:int(x[1])))]
+    points.remove(top)
+    bottom = points[points.index(min(points, key=lambda x:int(x[1])))]
+    points.remove(bottom)
+    middle = points.pop()
+
+    color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
+
+    x_init = bottom[0]
+    x_final = bottom[0]
+    y = bottom[1]
+    z_init = bottom[2]
+    z_final = middle[2]
+    delta_x = (top[0]-x_init)/(top[1]-bottom[1]) if top[1]!=bottom[1] else 0
+    delta_z = (top[2]-z_init)/(top[1]-bottom[1]) if top[1]!=bottom[1] else 0
+    draw_line(int(x_init), int(y), int(z_init), int(x_final), int(y), int(z_final), screen, zbuffer, color)
+    delta_x_f = (middle[0]-x_init)/(middle[1]-bottom[1]) if middle[1]!=bottom[1] else 0
+    delta_z_f = (middle[2]-z_init)/(middle[1]-bottom[1]) if middle[1]!=bottom[1] else 0
+
+    while y<middle[1]:
+        draw_line(int(x_init), int(y), int(z_init), int(x_final), int(y), int(z_final), screen, zbuffer, color)
+        x_init += delta_x
+        x_final += delta_x_f
+        z_init += delta_z
+        z_final += delta_z_f
+        y += 1
+
+    y = middle[1]
+    x_final = middle[0]
+    z_final = middle[2]
+
+    draw_line(int(x_init), int(y), int(z_init), int(x_final), int(y), int(z_final), screen, zbuffer, color)
+
+    delta_x_f = (top[0]-x_final)/(top[1]-middle[1]) if middle[1]!=top[1] else 0
+    delta_z_f = (top[2]-z_final)/(top[1]-middle[1]) if middle[1]!=top[1] else 0
+
+    while y<top[2]:
+        draw_line(int(x_init), int(y), int(z_init), int(x_final), int(y), int(z_final), screen, zbuffer, color)
+        x_init += delta_x
+        x_final += delta_x_f
+        z_init += delta_z
+        z_final += delta_z_f
+        y += 1
 
 
 
 
-scanline_convert([  [[2,3,3],[3,3,3],[-10,3,3]], [[2,3,3],[3,100,3],[-10,-10,3]], [[2,3,3],[3,-100,3],[-10,-10,3]]  ], 0, 0, 0)
+#scanline_convert([  [[2,3,3],[3,3,3],[-10,3,3]], [[2,3,3],[3,100,3],[-10,-10,3]], [[2,3,3],[3,-100,3],[-10,-10,3]]  ], 0, 0, 0)
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
     add_point(polygons, x0, y0, z0)
@@ -36,6 +72,7 @@ def draw_polygons( polygons, screen, zbuffer, color ):
         normal = calculate_normal(polygons, point)[:]
         #print normal
         if normal[2] > 0:
+            scanline_convert(polygons, point, screen, zbuffer)
             draw_line( int(polygons[point][0]),
                        int(polygons[point][1]),
                        polygons[point][2],
